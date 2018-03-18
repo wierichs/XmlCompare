@@ -12,11 +12,13 @@ namespace XmlCompare
         private XDocument m_docBase = new XDocument();
         private XDocument m_docCompare = new XDocument();
         private XDocument m_docResult = new XDocument();
+        private string m_attribIdentifier = "ID";
 
-        public XmlComparer(XDocument xBaseDocument, XDocument xDocumentToCompare)
+        public XmlComparer(XDocument xBaseDocument, XDocument xDocumentToCompare, string IdentifyingAttribute)
         {
             m_docBase = xBaseDocument;
             m_docCompare = xDocumentToCompare;
+            m_attribIdentifier = IdentifyingAttribute;
         }
         public XmlComparer(string BaseDocument, string DocumentToCompare)
         {
@@ -48,6 +50,7 @@ namespace XmlCompare
                         XElement xBaseSubElement = (XElement)xNode;
                         xResultElement.Add(new XElement(xBaseSubElement.Name));
                         XElement xResultSubElement = (XElement)xResultElement.LastNode;
+                        XElement xCompareSub = GetSubElement(xBaseSubElement, xElementToCompare);
                         CompareElements(xResultSubElement, xBaseSubElement, xElementToCompare);
                         break;
                 }
@@ -56,6 +59,27 @@ namespace XmlCompare
             {
                 CompareAttributes(xResultElement, xBaseAttribute, xElementToCompare);
             }
+        }
+
+        private XElement GetSubElement(XElement xReference, XElement xElementToSearch)
+        {
+            XElement xResult = null;
+            foreach (XElement xSub in xElementToSearch.Elements().Where(e => e.Name.Equals(xReference.Name)))
+            {
+                var xAttIdent = xSub.Attributes().Where(a => a.Name.Equals(m_attribIdentifier)).FirstOrDefault();
+                if (xAttIdent == null)
+                {
+                    xAttIdent = xSub.Attributes().Where(a => a.Name.Equals("ID")).FirstOrDefault();
+                }
+                if (xAttIdent == null)
+                {
+                    xAttIdent = xSub.Attributes().Where(a => a.Name.Equals("Name")).FirstOrDefault();
+                }
+                if (xAttIdent == null)
+                {
+                }
+            }
+            return xResult;
         }
 
         private void CompareText(XElement xResultElement, XText xBaseText, XElement xElementToCompare)
