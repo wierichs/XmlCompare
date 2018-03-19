@@ -85,6 +85,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Loupe_XML.ico" />
+    <Content Include="Resources\Defaults.xslt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="Resources\Loupe_XML_16x16.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
